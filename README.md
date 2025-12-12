@@ -69,125 +69,173 @@ Stores:
                      └────────────────────────────────┘
 
 
-## 🛠️ How to Run the Application
 
-1. Clone the Repository
-   
+---
+
+# 🛠️ How to Run the Application
+
+### **1. Clone the Repository**
+```sh
 git clone https://github.com/Chiru582004/Backend-intern-Assignment
+cd Backend-intern-Assignment
+```
 
-cd <Backend-intern-assignment>
-
-
-
-
-2. Configure MongoDB Connection
+### **2. Configure MongoDB Connection**
+```sh
+ 
 
 spring.data.mongodb.uri=mongodb://localhost:27017/multi_tenant_master
 app.jwt.secret=ChangeThisToA32+CharacterSecureSecretKey
 app.jwt.expirationMs=3600000
 server.port=8080
+```
 
 
-3. Start MongoDB
+### **3. Start MongoDB**
+```sh
 
 brew tap mongodb/brew
 brew install mongodb-community@6.0
 brew services start mongodb-community@6.0
+```
 
-
-4. Build & Start the Application
+### **4. Build & Start the Application**
+```sh
 
 mvn clean install
 mvn spring-boot:run
-
-Server runs on:
+Server runs at:
 http://localhost:8080
+```
 
-📡 API Endpoints (Postman Guide)
-1️⃣ Create Organization (Public)
+
+# 📡 API Endpoints (Postman Guide)
+
+### **1️⃣ Create Organization (Public)**
+
 POST /org/create
+Body:
+json
+Copy code
 
+```sh
 {
   "organization_name": "acme",
   "email": "admin@acme.com",
   "password": "Pass123"
 }
-
-2️⃣ Get Organization by Name (Public)
+```
+### **2️⃣ Get Organization by Name (Public)**
+```sh
 GET /org/get?organization_name=acme
+```
 
-3️⃣ Admin Login (Public)
+### **3️⃣ Admin Login (Public)**
 POST /admin/login
 
+json
+Copy code
+```sh
 {
   "email": "admin@acme.com",
   "password": "Pass123"
 }
+```
+**Response:**
 
-
-Sample Response:
-
+json
+Copy code
+```sh
 {
   "token": "<jwt-token>",
   "orgId": "<mongo-id>"
 }
+```
 
-4️⃣ Update Organization (Protected)
-
+### **4️⃣ Update Organization (Protected)**
+PUT /org/update
 Header:
 
+makefile
+Copy code
 Authorization: Bearer <token>
+Body:
 
-PUT /org/update
-
+json
+Copy code
+```sh
 {
   "organization_name": "acme",
   "new_organization_name": "acme_new",
   "email": "new_admin@acme.com",
   "password": "NewPass123"
 }
-
-5️⃣ Delete Organization (Protected)
+```
+### **5️⃣ Delete Organization (Protected)**
 DELETE /org/delete
-Authorization: Bearer <token>
+Header:
 
+makefile
+Copy code
+Authorization: Bearer <token>
+Body:
+
+json
+Copy code
+```sh
 {
   "organization_name": "acme_new"
 }
-
-🧪 Testing Flow Summary
-
-Create Organization → admin created, collection created
+```
+# 🧪 Testing Flow Summary
+Create Organization → admin created + dynamic collection created
 
 Login → receive JWT token
 
-Use token for Update/Delete
+Use token for:
 
-Validate collection changes in MongoDB
+Update Organization
 
-🧠 Design Choices (Brief Notes)
-1. Multi-Tenant Strategy
-One master DB for metadata
-One dynamic collection per org for isolation
-Easiest model for low–medium scale multi-tenancy
-Avoids cross-tenant data leakage
+Delete Organization
 
-2. JWT Security
-Stateless, scalable
-Encodes tenant and admin identity inside token
-Works well with microservices and load-balanced environments
+Verify new collections in MongoDB
 
-4. Modular Class-Based Architecture
-Controllers → input/output mapping
-Service → business logic
-Repo → persistence
-Security → filtering & authentication
-Promotes clean separation of concerns and testing
+## 🧠 Design Choices (Brief Notes)
+### **1. Multi-Tenant Strategy**
 
-4. Trade-offs
-Per-tenant collection model becomes expensive if tenants → thousands
-MongoDB has namespace limits, but manageable for moderate tenancy
-For large deployments → Prefer shared schema with tenantId field or database-per-tenant
+One master database storing metadata
 
+One collection per organization
 
+Clean separation of tenant data
 
+Perfect for low–medium scale deployments
+
+### **2. JWT Security**
+Stateless, scalable authentication
+
+Token carries tenant + admin identity
+
+No server-side session storage needed
+
+### **3. Modular Architecture**
+Controller layer: request mapping
+
+Service layer: core business logic
+
+Repository layer: MongoDB interactions
+
+Security layer: JWT authentication filter + config
+
+Promotes maintainability and testability
+
+### **4. Trade-offs**
+Per-organization collections may become heavy if tenants → thousands
+
+MongoDB namespace limits require planning
+
+Alternatives for large scale:
+
+Shared schema with tenantId
+
+Database-per-tenant
