@@ -1,9 +1,9 @@
 # 🏢 Multi-Tenant Organization Management Service
 
-**GitHub Repository:** REPLACE_WITH_YOUR_GITHUB_REPO_URL  
+GitHub Repository: https://github.com/Chiru582004/Backend-intern-Assignment
 
 A modular Spring Boot application implementing a multi-tenant architecture using MongoDB.  
-Each organization receives its own dynamic MongoDB collection (`org_<organization_name>`), and admins authenticate securely via JWT.
+Each organization receives its own dynamic MongoDB collection, and admins authenticate securely via JWT.
 
 This project demonstrates:
 - Multi-tenant backend architecture  
@@ -18,7 +18,7 @@ This project demonstrates:
 
 ### 🔹 Organization Management
 - Create new organizations dynamically  
-- Each org gets its own collection: `org_<organization_name>`  
+- Each organizatioon gets its own collection: `org_<organization_name>`  
 - Retrieve organization metadata from master DB  
 - Update organization metadata + migrate documents  
 - Delete organization + remove its collection  
@@ -72,14 +72,17 @@ Stores:
 ## 🛠️ How to Run the Application
 
 1. Clone the Repository
+   
 git clone https://github.com/Chiru582004/Backend-intern-Assignment
+
 cd <Backend-intern-assignment>
+
+
 
 
 2. Configure MongoDB Connection
 
 spring.data.mongodb.uri=mongodb://localhost:27017/multi_tenant_master
-
 app.jwt.secret=ChangeThisToA32+CharacterSecureSecretKey
 app.jwt.expirationMs=3600000
 server.port=8080
